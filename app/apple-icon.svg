@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <!-- Background -->
+  <rect width="180" height="180" rx="40" fill="#E0F2FE"/>
+
+  <!-- Stem -->
+  <path d="M90 140 Q90 100 90 70" stroke="#059669" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- Left leaf -->
+  <path d="M90 85 Q50 75 40 45 Q70 55 90 85" fill="#10B981"/>
+
+  <!-- Right leaf -->
+  <path d="M90 70 Q120 45 140 35 Q125 70 90 70" fill="#34D399"/>
+
+  <!-- Small sparkle/star -->
+  <circle cx="145" cy="40" r="8" fill="#FBBF24"/>
+  <path d="M145 25 L145 32 M145 48 L145 55 M130 40 L137 40 M153 40 L160 40" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+</svg>
