@@ -165,55 +165,85 @@ export async function submitIdea(
       message: 'Idea submitted successfully',
       submittedCount: 1,
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Submission error:', error)
-    console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
+
+    // Try to extract as much info as possible from the error
+    let errorMessage = 'Unknown error'
+    let errorCode = ''
+    let errorStatus = ''
+
+    if (error && typeof error === 'object') {
+      // Check for various error properties
+      const err = error as Record<string, unknown>
+
+      if ('message' in err) errorMessage = String(err.message)
+      if ('code' in err) errorCode = String(err.code)
+      if ('status' in err) errorStatus = String(err.status)
+
+      // Check for nested response error (common in Google API errors)
+      if ('response' in err && err.response && typeof err.response === 'object') {
+        const response = err.response as Record<string, unknown>
+        if ('data' in response && response.data && typeof response.data === 'object') {
+          const data = response.data as Record<string, unknown>
+          if ('error' in data && data.error && typeof data.error === 'object') {
+            const apiError = data.error as Record<string, unknown>
+            if ('message' in apiError) errorMessage = String(apiError.message)
+            if ('code' in apiError) errorCode = String(apiError.code)
+            if ('status' in apiError) errorStatus = String(apiError.status)
+          }
+        }
+      }
+
+      // Log all enumerable properties
+      console.error('Error properties:', Object.keys(err))
+      console.error('Error JSON:', JSON.stringify(err, null, 2))
+    }
+
+    console.error('Extracted - message:', errorMessage, 'code:', errorCode, 'status:', errorStatus)
 
     // Handle specific error types
-    if (error instanceof Error) {
-      console.error('Error message:', error.message)
-      console.error('Error stack:', error.stack)
-
-      if (error.message.includes('Missing Google Sheets configuration')) {
-        return {
-          success: false,
-          message: 'Server configuration error. Please contact the administrator.',
-        }
-      }
-      if (error.message.includes('PERMISSION_DENIED') || error.message.includes('403')) {
-        return {
-          success: false,
-          message: 'Permission denied. The service account may not have access to the spreadsheet.',
-        }
-      }
-      if (error.message.includes('NOT_FOUND') || error.message.includes('404')) {
-        return {
-          success: false,
-          message: 'Spreadsheet not found. Please check the configuration.',
-        }
-      }
-      if (error.message.includes('invalid_grant') || error.message.includes('Invalid JWT')) {
-        return {
-          success: false,
-          message: 'Authentication error. Please check the service account credentials.',
-        }
-      }
-      if (error.message.includes('timed out')) {
-        return {
-          success: false,
-          message: 'Connection to Google Sheets timed out. This usually indicates an authentication issue.',
-        }
-      }
-      // Return the actual error message for debugging
+    if (errorMessage.includes('Missing Google Sheets configuration')) {
       return {
         success: false,
-        message: `Error: ${error.message}`,
+        message: 'Server configuration error. Please contact the administrator.',
+      }
+    }
+    if (errorMessage.includes('PERMISSION_DENIED') || errorCode === '403' || errorStatus === 'PERMISSION_DENIED') {
+      return {
+        success: false,
+        message: 'Permission denied. The service account may not have access to the spreadsheet.',
+      }
+    }
+    if (errorMessage.includes('NOT_FOUND') || errorCode === '404' || errorStatus === 'NOT_FOUND') {
+      return {
+        success: false,
+        message: 'Spreadsheet not found. Please check the configuration.',
+      }
+    }
+    if (errorMessage.includes('invalid_grant') || errorMessage.includes('Invalid JWT')) {
+      return {
+        success: false,
+        message: 'Authentication error. Please check the service account credentials.',
+      }
+    }
+    if (errorMessage.includes('timed out')) {
+      return {
+        success: false,
+        message: 'Connection to Google Sheets timed out. This usually indicates an authentication issue.',
+      }
+    }
+    if (errorMessage.includes('API has not been used') || errorMessage.includes('it is disabled')) {
+      return {
+        success: false,
+        message: 'Google Sheets API is not enabled. Please enable it in Google Cloud Console.',
       }
     }
 
+    // Return detailed error for debugging
     return {
       success: false,
-      message: 'An unexpected error occurred. Please try again.',
+      message: `Error: ${errorMessage}${errorCode ? ` (code: ${errorCode})` : ''}${errorStatus ? ` [${errorStatus}]` : ''}`,
     }
   }
 }
