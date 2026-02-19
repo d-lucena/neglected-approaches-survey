@@ -117,8 +117,12 @@ export async function submitIdea(
     }
 
     // Production mode: write to Google Sheets
+    console.log('Step 1: Getting Google Sheet...')
     const doc = await getGoogleSheet()
+    console.log('Step 2: Got doc, title:', doc.title)
+
     const sheet = doc.sheetsByIndex[0]
+    console.log('Step 3: Got sheet:', sheet?.title)
 
     if (!sheet) {
       return {
@@ -142,11 +146,18 @@ export async function submitIdea(
     ]
 
     // Check if headers exist, if not add them
-    await sheet.loadHeaderRow().catch(async () => {
+    console.log('Step 4: Loading header row...')
+    try {
+      await sheet.loadHeaderRow()
+      console.log('Step 5: Headers loaded:', sheet.headerValues)
+    } catch {
+      console.log('Step 5: No headers found, setting them...')
       await sheet.setHeaderRow(headers)
-    })
+      console.log('Step 6: Headers set')
+    }
 
     // Add row for the idea
+    console.log('Step 7: Adding row...')
     await sheet.addRow({
       Timestamp: timestamp,
       Email: contactInfo.email,
@@ -159,6 +170,7 @@ export async function submitIdea(
       'Optimistic Outcome': idea.optimisticOutcome.toString(),
       'Success Likelihood': idea.successLikelihood.toString(),
     })
+    console.log('Step 8: Row added successfully')
 
     return {
       success: true,
@@ -172,6 +184,7 @@ export async function submitIdea(
     let errorMessage = 'Unknown error'
     let errorCode = ''
     let errorStatus = ''
+    let errorDetails = ''
 
     if (error && typeof error === 'object') {
       // Check for various error properties
@@ -184,23 +197,39 @@ export async function submitIdea(
       // Check for nested response error (common in Google API errors)
       if ('response' in err && err.response && typeof err.response === 'object') {
         const response = err.response as Record<string, unknown>
+        console.error('Response object:', JSON.stringify(response, null, 2))
+        if ('status' in response) errorCode = String(response.status)
+        if ('statusText' in response) errorStatus = String(response.statusText)
         if ('data' in response && response.data && typeof response.data === 'object') {
           const data = response.data as Record<string, unknown>
+          console.error('Response data:', JSON.stringify(data, null, 2))
           if ('error' in data && data.error && typeof data.error === 'object') {
             const apiError = data.error as Record<string, unknown>
             if ('message' in apiError) errorMessage = String(apiError.message)
             if ('code' in apiError) errorCode = String(apiError.code)
             if ('status' in apiError) errorStatus = String(apiError.status)
+            if ('details' in apiError) errorDetails = JSON.stringify(apiError.details)
+          } else if ('error_description' in data) {
+            errorMessage = String(data.error_description)
           }
         }
       }
 
+      // Check for cause (Node.js error chaining)
+      if ('cause' in err && err.cause) {
+        console.error('Error cause:', err.cause)
+      }
+
       // Log all enumerable properties
       console.error('Error properties:', Object.keys(err))
-      console.error('Error JSON:', JSON.stringify(err, null, 2))
+      try {
+        console.error('Error JSON:', JSON.stringify(err, null, 2))
+      } catch {
+        console.error('Could not stringify error')
+      }
     }
 
-    console.error('Extracted - message:', errorMessage, 'code:', errorCode, 'status:', errorStatus)
+    console.error('Extracted - message:', errorMessage, 'code:', errorCode, 'status:', errorStatus, 'details:', errorDetails)
 
     // Handle specific error types
     if (errorMessage.includes('Missing Google Sheets configuration')) {
