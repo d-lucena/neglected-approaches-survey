@@ -167,10 +167,12 @@ export async function submitIdea(
     }
   } catch (error) {
     console.error('Submission error:', error)
+    console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
 
     // Handle specific error types
     if (error instanceof Error) {
       console.error('Error message:', error.message)
+      console.error('Error stack:', error.stack)
 
       if (error.message.includes('Missing Google Sheets configuration')) {
         return {
