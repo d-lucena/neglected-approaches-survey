@@ -1,4 +1,5 @@
 export { default as ContactInfoSection } from './ContactInfoSection'
+export { default as GardenProgress } from './GardenProgress'
 export { default as IdeaCard } from './IdeaCard'
 export { default as IdeaForm } from './IdeaForm'
 export { default as IdeaList } from './IdeaList'

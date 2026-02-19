@@ -6,9 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui'
 import {
   ContactInfoSection,
+  GardenProgress,
   IdeaForm,
   IdeaList,
-  ProgressIndicator,
 } from '@/components'
 import { contactInfoSchema, ContactInfoFormData } from '@/lib/schemas'
 import { Idea, ContactInfo } from '@/lib/types'
@@ -247,7 +247,7 @@ export default function SurveyPage() {
               </h2>
             </div>
 
-            <ProgressIndicator count={ideas.length} target={10} />
+            <GardenProgress count={ideas.length} />
 
             {submitSuccess && (
               <div
