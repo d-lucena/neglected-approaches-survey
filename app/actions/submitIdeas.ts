@@ -14,7 +14,16 @@ function isGoogleSheetsConfigured(): boolean {
 }
 
 async function getGoogleSheet(): Promise<GoogleSpreadsheet> {
-  const privateKey = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n')
+  // Handle both escaped newlines (\n as string) and actual newlines
+  let privateKey = process.env.GOOGLE_SHEETS_PRIVATE_KEY
+  if (privateKey) {
+    // Replace escaped newlines with actual newlines
+    privateKey = privateKey.replace(/\\n/g, '\n')
+    // Remove surrounding quotes if present
+    if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+      privateKey = privateKey.slice(1, -1).replace(/\\n/g, '\n')
+    }
+  }
   const clientEmail = process.env.GOOGLE_SHEETS_CLIENT_EMAIL
   const sheetId = process.env.GOOGLE_SHEET_ID
 
@@ -140,6 +149,8 @@ export async function submitIdea(
 
     // Handle specific error types
     if (error instanceof Error) {
+      console.error('Error message:', error.message)
+
       if (error.message.includes('Missing Google Sheets configuration')) {
         return {
           success: false,
@@ -156,6 +167,12 @@ export async function submitIdea(
         return {
           success: false,
           message: 'Spreadsheet not found. Please check the configuration.',
+        }
+      }
+      if (error.message.includes('invalid_grant') || error.message.includes('Invalid JWT')) {
+        return {
+          success: false,
+          message: 'Authentication error. Please check the service account credentials.',
         }
       }
     }
