@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 15, 23, 42;
+  --background-start: 248, 250, 252;
+  --background-end: 241, 245, 249;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+      180deg,
+      rgb(var(--background-start)) 0%,
+      rgb(var(--background-end)) 100%
+    );
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: rgba(59, 130, 246, 0.2);
+  }
+}
+
+@layer components {
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-xl border border-gray-100 shadow-soft;
+  }
+
+  .card-elevated {
+    @apply bg-white rounded-xl border border-gray-100 shadow-soft-lg;
+  }
+
+  /* Focus ring styles */
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-brand-800;
+  }
+
+  /* Section header styles */
+  .section-header {
+    @apply text-lg font-semibold text-gray-900 tracking-tight;
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    @apply transition-all duration-200 ease-out;
+  }
+}
+
+@layer utilities {
+  /* Subtle hover lift effect */
+  .hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-0.5;
+  }
+
+  /* Glass effect for cards */
+  .glass {
+    @apply bg-white/80 backdrop-blur-sm;
+  }
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid rgb(59, 130, 246);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar for idea list */
+.idea-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.idea-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.idea-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.idea-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Input placeholder animation */
+input::placeholder,
+textarea::placeholder {
+  transition: opacity 0.2s ease;
+}
+
+input:focus::placeholder,
+textarea:focus::placeholder {
+  opacity: 0.5;
+}
+
+/* Scale selector button group */
+.scale-button-group {
+  @apply flex flex-wrap gap-1.5;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle pulse for active states */
+@keyframes subtle-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0);
+  }
+}
+
+.pulse-ring {
+  animation: subtle-pulse 2s ease-in-out infinite;
+}
