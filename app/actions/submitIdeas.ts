@@ -13,6 +13,15 @@ function isGoogleSheetsConfigured(): boolean {
   )
 }
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operation: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${operation} timed out after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ])
+}
+
 async function getGoogleSheet(): Promise<GoogleSpreadsheet> {
   // Handle both escaped newlines (\n as string) and actual newlines
   let privateKey = process.env.GOOGLE_SHEETS_PRIVATE_KEY
@@ -31,6 +40,14 @@ async function getGoogleSheet(): Promise<GoogleSpreadsheet> {
     throw new Error('Missing Google Sheets configuration')
   }
 
+  // Debug: Log key format info (not the actual key)
+  console.log('Private key starts with:', privateKey.substring(0, 30))
+  console.log('Private key ends with:', privateKey.substring(privateKey.length - 30))
+  console.log('Private key length:', privateKey.length)
+  console.log('Contains actual newlines:', privateKey.includes('\n'))
+  console.log('Client email:', clientEmail)
+  console.log('Sheet ID:', sheetId)
+
   const jwt = new JWT({
     email: clientEmail,
     key: privateKey,
@@ -38,7 +55,11 @@ async function getGoogleSheet(): Promise<GoogleSpreadsheet> {
   })
 
   const doc = new GoogleSpreadsheet(sheetId, jwt)
-  await doc.loadInfo()
+
+  // Add timeout to prevent hanging
+  console.log('Loading sheet info...')
+  await withTimeout(doc.loadInfo(), 10000, 'Loading sheet info')
+  console.log('Sheet info loaded successfully')
 
   return doc
 }
@@ -174,6 +195,17 @@ export async function submitIdea(
           success: false,
           message: 'Authentication error. Please check the service account credentials.',
         }
+      }
+      if (error.message.includes('timed out')) {
+        return {
+          success: false,
+          message: 'Connection to Google Sheets timed out. This usually indicates an authentication issue.',
+        }
+      }
+      // Return the actual error message for debugging
+      return {
+        success: false,
+        message: `Error: ${error.message}`,
       }
     }
 
