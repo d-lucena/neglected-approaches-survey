@@ -20,7 +20,6 @@ interface IdeaFormProps {
   onCancel: () => void
   initialData?: Idea
   ideaNumber: number
-  savedIdeasCount: number
 }
 
 export default function IdeaForm({
@@ -28,7 +27,6 @@ export default function IdeaForm({
   onCancel,
   initialData,
   ideaNumber,
-  savedIdeasCount,
 }: IdeaFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitCount, setSubmitCount] = useState(0)
@@ -220,9 +218,9 @@ export default function IdeaForm({
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-        {savedIdeasCount > 0 && (
+        {initialData && (
           <Button type="button" variant="secondary" onClick={onCancel}>
-            {initialData ? 'Cancel' : `View ${savedIdeasCount} Submitted Idea${savedIdeasCount > 1 ? 's' : ''}`}
+            Cancel
           </Button>
         )}
         <Button type="button" onClick={handleSaveClick} loading={isSubmitting}>

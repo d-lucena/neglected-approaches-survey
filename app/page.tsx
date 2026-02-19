@@ -15,7 +15,7 @@ import { Idea, ContactInfo } from '@/lib/types'
 import { useFormPersistence } from '@/hooks/useFormPersistence'
 import { submitIdea } from './actions/submitIdeas'
 
-type FormMode = 'list' | 'add' | 'edit'
+type FormMode = 'add' | 'edit'
 
 export default function SurveyPage() {
   const {
@@ -25,24 +25,12 @@ export default function SurveyPage() {
     addIdea,
     updateIdea,
     deleteIdea,
-    isInitialized,
   } = useFormPersistence()
 
   const [formMode, setFormMode] = useState<FormMode>('add')
   const [editingIdeaId, setEditingIdeaId] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
-  const [hasInitializedMode, setHasInitializedMode] = useState(false)
-
-  // Switch to list mode ONLY on initial load if there are saved ideas
-  useEffect(() => {
-    if (isInitialized && !hasInitializedMode) {
-      if (ideas.length > 0) {
-        setFormMode('list')
-      }
-      setHasInitializedMode(true)
-    }
-  }, [isInitialized, hasInitializedMode, ideas.length])
 
   const {
     register,
@@ -79,13 +67,6 @@ export default function SurveyPage() {
     return () => clearTimeout(timeout)
   }, [watchedContactInfo, contactInfo, setContactInfo])
 
-  const handleAddIdea = () => {
-    setFormMode('add')
-    setEditingIdeaId(null)
-    setSubmitError(null)
-    setSubmitSuccess(null)
-  }
-
   const handleEditIdea = (id: string) => {
     setEditingIdeaId(id)
     setFormMode('edit')
@@ -115,11 +96,11 @@ export default function SurveyPage() {
         if (result.success) {
           if (formMode === 'edit' && editingIdeaId) {
             updateIdea(editingIdeaId, idea)
-            setFormMode('list')
           } else {
             addIdea(idea)
           }
           setEditingIdeaId(null)
+          setFormMode('add')
           setSubmitSuccess('Idea submitted successfully!')
           setTimeout(() => setSubmitSuccess(null), 3000)
           return true
@@ -136,7 +117,7 @@ export default function SurveyPage() {
   )
 
   const handleCancelIdea = () => {
-    setFormMode('list')
+    setFormMode('add')
     setEditingIdeaId(null)
   }
 
@@ -266,9 +247,7 @@ export default function SurveyPage() {
               </h2>
             </div>
 
-            {formMode === 'list' && (
-              <ProgressIndicator count={ideas.length} target={10} />
-            )}
+            <ProgressIndicator count={ideas.length} target={10} />
 
             {submitSuccess && (
               <div
@@ -309,55 +288,28 @@ export default function SurveyPage() {
               </div>
             )}
 
-            <div className={formMode === 'list' ? 'mt-6' : ''}>
-              {formMode === 'list' ? (
-                <>
+            <div>
+              {/* Show submitted ideas above the form */}
+              {ideas.length > 0 && (
+                <div className="mb-6">
                   <IdeaList
                     ideas={ideas}
                     onEditIdea={handleEditIdea}
                     onDeleteIdea={handleDeleteIdea}
+                    compact
                   />
-                  <div className="mt-6">
-                    <Button
-                      type="button"
-                      variant="primary"
-                      size="lg"
-                      onClick={handleAddIdea}
-                      className="w-full text-base py-4 rounded-xl"
-                    >
-                      <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      Add {ideas.length === 0 ? 'Your First' : 'Another'} Idea
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* Show submitted ideas above the form */}
-                  {ideas.length > 0 && (
-                    <div className="mb-6">
-                      <IdeaList
-                        ideas={ideas}
-                        onEditIdea={handleEditIdea}
-                        onDeleteIdea={handleDeleteIdea}
-                        compact
-                      />
-                    </div>
-                  )}
-                  <IdeaForm
-                    onSave={handleSaveIdea}
-                    onCancel={handleCancelIdea}
-                    initialData={editingIdea}
-                    ideaNumber={
-                      formMode === 'edit'
-                        ? ideas.findIndex((i) => i.id === editingIdeaId) + 1
-                        : ideas.length + 1
-                    }
-                    savedIdeasCount={ideas.length}
-                  />
-                </>
+                </div>
               )}
+              <IdeaForm
+                onSave={handleSaveIdea}
+                onCancel={handleCancelIdea}
+                initialData={editingIdea}
+                ideaNumber={
+                  formMode === 'edit'
+                    ? ideas.findIndex((i) => i.id === editingIdeaId) + 1
+                    : ideas.length + 1
+                }
+              />
             </div>
           </section>
         </div>
