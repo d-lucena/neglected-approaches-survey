@@ -71,7 +71,6 @@ export default function SurveyPage() {
     setEditingIdeaId(id)
     setFormMode('edit')
     setSubmitError(null)
-    setSubmitSuccess(null)
   }
 
   const handleSaveIdea = useCallback(
