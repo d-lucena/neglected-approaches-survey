@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui'
 import {
   ContactInfoSection,
-  GardenProgress,
+  DoomCelebration,
   IdeaForm,
   IdeaList,
 } from '@/components'
@@ -30,7 +30,7 @@ export default function SurveyPage() {
   const [formMode, setFormMode] = useState<FormMode>('add')
   const [editingIdeaId, setEditingIdeaId] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
+  const [celebrationCount, setCelebrationCount] = useState(0)
 
   const {
     register,
@@ -77,7 +77,6 @@ export default function SurveyPage() {
   const handleSaveIdea = useCallback(
     async (idea: Idea): Promise<boolean> => {
       setSubmitError(null)
-      setSubmitSuccess(null)
 
       const currentContactInfo = getValues()
 
@@ -98,11 +97,11 @@ export default function SurveyPage() {
             updateIdea(editingIdeaId, idea)
           } else {
             addIdea(idea)
+            // Trigger celebration for new ideas (not edits)
+            setCelebrationCount(ideas.length + 1)
           }
           setEditingIdeaId(null)
           setFormMode('add')
-          setSubmitSuccess('Idea submitted successfully!')
-          setTimeout(() => setSubmitSuccess(null), 3000)
           return true
         } else {
           setSubmitError(result.message)
@@ -113,7 +112,7 @@ export default function SurveyPage() {
         return false
       }
     },
-    [formMode, editingIdeaId, getValues, addIdea, updateIdea]
+    [formMode, editingIdeaId, getValues, addIdea, updateIdea, ideas.length]
   )
 
   const handleCancelIdea = () => {
@@ -247,22 +246,6 @@ export default function SurveyPage() {
               </h2>
             </div>
 
-            <GardenProgress count={ideas.length} />
-
-            {submitSuccess && (
-              <div
-                className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl p-4 animate-fade-in"
-                role="status"
-              >
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <p className="text-emerald-800 text-sm font-medium">{submitSuccess}</p>
-              </div>
-            )}
-
             {submitError && (
               <div
                 className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4 animate-fade-in"
@@ -322,6 +305,14 @@ export default function SurveyPage() {
           </p>
         </footer>
       </div>
+
+      {/* Full-screen doom celebration */}
+      {celebrationCount > 0 && (
+        <DoomCelebration
+          count={celebrationCount}
+          onClose={() => setCelebrationCount(0)}
+        />
+      )}
     </main>
   )
 }
