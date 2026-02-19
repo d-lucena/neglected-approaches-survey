@@ -204,7 +204,7 @@ export default function IdeaForm({
             render={({ field }) => (
               <ScaleSelector
                 name="successLikelihood"
-                label="With unlimited resources (compute & researchers) and 1 year, how likely is achieving the maximally optimistic outcome? (1 = 10%, 10 = 100%)"
+                label="With unlimited resources (compute & researchers) and 1 year, how likely is achieving the maximally optimistic outcome?"
                 min={1}
                 max={10}
                 value={field.value || undefined}
@@ -212,6 +212,7 @@ export default function IdeaForm({
                 required
                 error={errors.successLikelihood?.message}
                 labels={SUCCESS_LIKELIHOOD_LABELS}
+                showLabelsAsButtons
               />
             )}
           />

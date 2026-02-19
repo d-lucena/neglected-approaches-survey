@@ -12,11 +12,12 @@ interface ScaleSelectorProps {
   label?: string
   required?: boolean
   labels?: Record<number, string>
+  showLabelsAsButtons?: boolean
 }
 
 const ScaleSelector = forwardRef<HTMLDivElement, ScaleSelectorProps>(
   (
-    { name, min, max, value, onChange, error, label, required, labels = {} },
+    { name, min, max, value, onChange, error, label, required, labels = {}, showLabelsAsButtons = false },
     ref
   ) => {
     const range = Array.from({ length: max - min + 1 }, (_, i) => min + i)
@@ -39,7 +40,8 @@ const ScaleSelector = forwardRef<HTMLDivElement, ScaleSelectorProps>(
         >
           {range.map((num) => {
             const isSelected = value === num
-            const tooltip = labels[num]
+            const buttonLabel = labels[num]
+            const displayText = showLabelsAsButtons && buttonLabel ? buttonLabel : num
 
             return (
               <button
@@ -58,15 +60,15 @@ const ScaleSelector = forwardRef<HTMLDivElement, ScaleSelectorProps>(
                 `}
                 role="radio"
                 aria-checked={isSelected}
-                aria-label={tooltip || `${num}`}
-                title={tooltip}
+                aria-label={buttonLabel || `${num}`}
+                title={buttonLabel}
               >
-                {num}
+                {displayText}
               </button>
             )
           })}
         </div>
-        {labels[min] && labels[max] && (
+        {!showLabelsAsButtons && labels[min] && labels[max] && (
           <div className="flex justify-between mt-2 text-xs text-gray-500 max-w-[300px]">
             <span>{labels[min]}</span>
             <span>{labels[max]}</span>
