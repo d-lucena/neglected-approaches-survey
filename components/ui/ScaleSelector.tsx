@@ -34,7 +34,13 @@ const ScaleSelector = forwardRef<HTMLDivElement, ScaleSelectorProps>(
           </p>
         )}
         <div
-          className="inline-flex flex-wrap gap-1.5 p-1 bg-gray-100/80 rounded-lg"
+          className={`inline-grid gap-1.5 p-1 bg-gray-100/80 rounded-lg ${
+            showLabelsAsButtons
+              ? 'grid-cols-5'
+              : max - min + 1 <= 5
+                ? `grid-cols-${max - min + 1}`
+                : 'grid-cols-5 sm:grid-cols-10'
+          }`}
           role="radiogroup"
           aria-labelledby={`${name}-label`}
         >
@@ -49,7 +55,7 @@ const ScaleSelector = forwardRef<HTMLDivElement, ScaleSelectorProps>(
                 type="button"
                 onClick={() => onChange?.(num)}
                 className={`
-                  min-w-[42px] h-9 px-2.5 rounded-md text-sm font-medium
+                  h-9 px-2 rounded-md text-sm font-medium
                   transition-all duration-200
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
                   ${
