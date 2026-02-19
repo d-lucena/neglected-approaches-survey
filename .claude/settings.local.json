@@ -23,7 +23,8 @@
       "Bash(gh repo create:*)",
       "Bash(npx vercel:*)",
       "WebFetch(domain:neglected-approaches-survey.vercel.app)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }

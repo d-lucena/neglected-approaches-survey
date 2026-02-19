@@ -213,7 +213,15 @@ export default function SurveyPage() {
                   <p className="text-sm text-gray-600">
                     <span className="font-medium text-gray-800">Novel Alignment Post-Training Objectives</span> —
                     Alternatives to standard human preference data approaches that yield more robust,
-                    generalizable alignment.
+                    generalizable alignment. (Example:{' '}
+                    <a
+                      href="https://www.lesswrong.com/posts/u5aZkLXdLmDBB5Yqv/self-other-overlap-a-neglected-approach-to-ai-alignment"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 underline decoration-blue-200 hover:decoration-blue-400 underline-offset-2"
+                    >
+                      Self-Other Overlap
+                    </a>)
                   </p>
                 </div>
                 <div className="relative pl-4 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-gradient-to-b before:from-purple-400 before:to-purple-200 before:rounded-full">
