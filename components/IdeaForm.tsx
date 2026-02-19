@@ -145,7 +145,7 @@ export default function IdeaForm({
       <div className="space-y-5">
         <div>
           <Input
-            label="TLDR: Single-sentence idea summary"
+            label="TLDR: In a single sentence, what is your idea for a promising but currently neglected approach to AI alignment?"
             placeholder="e.g., Use conservation laws from physics to create alignment properties that persist through self-modification"
             required
             error={errors.tldr?.message}
@@ -159,8 +159,8 @@ export default function IdeaForm({
 
         <div>
           <Textarea
-            label="Details"
-            placeholder="Explain your idea in more detail. Include any relevant links, references, papers, or context that would help reviewers understand the approach."
+            label="Details: Can be a longer writeup, links, etc. Whatever you feel effectively gets the idea across."
+            placeholder="Explain your idea in more detail. Include any relevant links, references, papers, or context."
             required
             error={errors.details?.message}
             {...register('details')}
@@ -179,14 +179,14 @@ export default function IdeaForm({
           className="min-h-[100px]"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+        <div className="space-y-6 pt-2">
           <Controller
             name="optimisticOutcome"
             control={control}
             render={({ field }) => (
               <ScaleSelector
                 name="optimisticOutcome"
-                label="Optimistic outcome impact"
+                label='Maximally optimistic outcome: How much does this contribute to solving the "core problem of alignment" (building safe, self-improving superintelligence)?'
                 min={1}
                 max={5}
                 value={field.value || undefined}
@@ -204,7 +204,7 @@ export default function IdeaForm({
             render={({ field }) => (
               <ScaleSelector
                 name="successLikelihood"
-                label="1-year success likelihood"
+                label="With unlimited resources (compute & researchers) and 1 year, how likely is achieving the maximally optimistic outcome? (1 = 10%, 10 = 100%)"
                 min={1}
                 max={10}
                 value={field.value || undefined}

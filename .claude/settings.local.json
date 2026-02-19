@@ -16,7 +16,14 @@
       "Bash(kill:*)",
       "Bash(node:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Neglected Alignment Ideas Survey\n\nA Next.js survey app for collecting AI alignment research ideas.\n\nFeatures:\n- Multi-idea submission \\(add unlimited ideas in one session\\)\n- Contact info entered once, used for all ideas\n- Real-time validation with character count feedback\n- Google Sheets integration for data storage\n- localStorage persistence for drafts\n- Clean, minimalist design\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git config:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo create:*)",
+      "Bash(npx vercel:*)",
+      "WebFetch(domain:neglected-approaches-survey.vercel.app)",
+      "Bash(git commit:*)"
     ]
   }
 }

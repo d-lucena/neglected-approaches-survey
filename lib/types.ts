@@ -47,14 +47,14 @@ export const OPTIMISTIC_OUTCOME_LABELS: Record<number, string> = {
 }
 
 export const SUCCESS_LIKELIHOOD_LABELS: Record<number, string> = {
-  1: '1 - Very unlikely',
-  2: '2',
-  3: '3',
-  4: '4',
-  5: '5',
-  6: '6',
-  7: '7',
-  8: '8',
-  9: '9',
-  10: '10 - Very likely',
+  1: '1 - 10%',
+  2: '2 - 20%',
+  3: '3 - 30%',
+  4: '4 - 40%',
+  5: '5 - 50%',
+  6: '6 - 60%',
+  7: '7 - 70%',
+  8: '8 - 80%',
+  9: '9 - 90%',
+  10: '10 - 100%',
 }
