@@ -58,10 +58,10 @@ const celebrations = [
     pDoomChange: -0.01,
   },
   {
-    headline: "Anthropic researchers feel strange sensation",
+    headline: "AE Studio researchers feel strange sensation",
     subtext: "Diagnosed as 'cautious optimism'",
-    figure: "Anonymous Researcher",
-    quote: "Wait, people outside the labs are thinking about this too?",
+    figure: "Anonymous AE Researcher",
+    quote: "Wait, people outside the studio are thinking about this too?",
     pDoomChange: -0.02,
   },
   {
